@@ -1,5 +1,9 @@
 import React from 'react';
+import VerifiedElement from './VerifiedElement';
+import AuthContext from './AuthContext';
 import './App.css';
+import MouseTracker from './MouseTracker';
+
 
 function BoilingVerdict(props) {
   if (props.celsius >= 100) {
@@ -169,6 +173,8 @@ class ExceptionName extends React.Component {
   }
 }
 
+
+
 class AuthForm extends React.Component {
   constructor(props) {
     super(props);
@@ -178,6 +184,7 @@ class AuthForm extends React.Component {
       result: ''
     }
   }
+
   handleChange = (e) => {
     this.setState({
       value: e.target.value
@@ -185,7 +192,8 @@ class AuthForm extends React.Component {
   }
   handleSubmit = (e) => {
     // console.log(this.state.isLoggedIn)
-    if (this.state.value == '1234qwer!') {
+    if (this.state.value === '1234qwer!') {
+      // this.AuthContext = React.createContext(this.state.value);
       this.setState({
         isLoggedIn: true
       });
@@ -197,15 +205,19 @@ class AuthForm extends React.Component {
       })
     }
   }
-  verifiedElement = () => {
-    return (
-      <div>Logged In</div>
-    );
-  }
+  // verifiedElement = () => {
+  //   const contextType = AuthContext;
+  //   return (
+  //     <div>Logged In</div>
+  //   );
+  // }
   render() {
     return (
       this.state.isLoggedIn ? <div>
-        {this.verifiedElement()}
+        <AuthContext.Provider value={this.state.value}>
+          <VerifiedElement/>
+          {/* {this.verifiedElement()} */}
+        </AuthContext.Provider>
       </div>
         :
         <div>
@@ -267,6 +279,7 @@ class Toggle extends React.Component {
       isToggleOn: true,
       labelName: 'init'
     }
+    this.textInput = React.createRef();
     this.handleClick = this.handleClick.bind(this); // 이건 뭐지 UC에서는 useState Hook을 써서 간편했던건가
   }
   handleClick() {
@@ -294,9 +307,16 @@ class Toggle extends React.Component {
     }))
   }
 
+  focusingToTextInput = (e) => {
+    this.textInput.current.focus();
+  }
+
   render() {
     return (
       <div>
+        <input type="text" ref={this.textInput}></input>
+        <input type="button" onClick={this.focusingToTextInput} value="focusing"></input>
+        <br/>
         <button onClick={this.handleClick}>
           {this.state.isToggleOn ? 'ON' : 'OFF'}
         </button>
@@ -336,7 +356,6 @@ class Clock extends React.Component {
       })
     );
   }
-
   render() {
     return (
       <div>
@@ -350,7 +369,7 @@ function App() {
   return (
     <div>
       {element}
-      <Clock />
+      <Clock/>
       {Form()}
       <Toggle />
       <NumberList number={numbers} />
@@ -358,8 +377,8 @@ function App() {
       <ExceptionName />
       <InputElement />
       <Calculator />
+      <MouseTracker />
     </div>
   );
 }
-
 export default App;
